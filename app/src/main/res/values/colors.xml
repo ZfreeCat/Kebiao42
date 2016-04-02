@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#65934a</color>
+    <color name="colorPrimaryDark">#407434</color>
+    <color name="colorAccent">#de7d2c</color>
+
+    <color name="classIndex">#e8ddcb</color>
+    <color name="courseTextColor">#ECECEC</color>
+    <color name="actionBarBg">#e8ddcb</color>
+    <color name="actionBarText">#EDEDED</color>
+    <color name="buttonTextColor">#ffffff</color>
+</resources>

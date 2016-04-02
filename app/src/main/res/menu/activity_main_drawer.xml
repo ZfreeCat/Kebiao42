@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_grade"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="学生成绩查询" />
+        <item
+            android:id="@+id/nav_test"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="考试信息查询" />
+        <item
+            android:checked="true"
+            android:id="@+id/nav_course"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="学生个人课表" />
+    </group>
+
+    <item android:title="小纸条">
+        <menu>
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="发送" />
+        </menu>
+    </item>
+
+</menu>
