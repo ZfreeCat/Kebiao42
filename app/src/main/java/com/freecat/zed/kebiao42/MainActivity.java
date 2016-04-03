@@ -74,6 +74,8 @@ public class MainActivity extends AppCompatActivity
     private Student s2 = new Student();
     private Student[] s = {s1, s2};
 
+    private Toolbar toolbar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +92,7 @@ public class MainActivity extends AppCompatActivity
         content_main_courseB = inflater.inflate(R.layout.content_main_course, null);
 
 
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -127,36 +129,12 @@ public class MainActivity extends AppCompatActivity
         /**
          *
          */
-
-        PagerAdapter pagerAdapter=refresh();
-
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(pagerAdapter);
-        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                infoAll = infoAllList.get(position);
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-
+        setupContainer();
 
     }
 
-    public PagerAdapter refresh(){
-
+    public void setupContainer() {
         checkJsonIsEmpty4Layout();
-
 
         PagerAdapter pagerAdapter = new PagerAdapter() {
 
@@ -176,7 +154,7 @@ public class MainActivity extends AppCompatActivity
             public void destroyItem(ViewGroup container, int position,
                                     Object object) {
                 // TODO Auto-generated method stub
-                container.removeView(viewList.get(position));
+
             }
 
             @Override
@@ -186,12 +164,33 @@ public class MainActivity extends AppCompatActivity
                 return viewList.get(position);
             }
         };
-        return pagerAdapter;
+        // Set up the ViewPager with the sections adapter.
+
+
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager.setAdapter(pagerAdapter);
+        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                infoAll = infoAllList.get(position);
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     public void checkJsonIsEmpty4Login() {
         jsonA = loadJson("jsonA");
         jsonB = loadJson("jsonB");
+
         if (TextUtils.isEmpty(jsonA)) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             intent.putExtra("filename", "jsonA");
@@ -209,6 +208,9 @@ public class MainActivity extends AppCompatActivity
     public void checkJsonIsEmpty4Layout() {
         jsonA = loadJson("jsonA");
         jsonB = loadJson("jsonB");
+        infoAllList.clear();
+        viewList.clear();
+        json.clear();
 
         if (TextUtils.isEmpty(jsonA) && TextUtils.isEmpty(jsonB)) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -219,7 +221,7 @@ public class MainActivity extends AppCompatActivity
         if (!TextUtils.isEmpty(jsonA)) {
             Gson gson = new Gson();
             infoAllA = gson.fromJson(jsonA, InfoAll.class);
-            getCourseLayout(infoAllA, content_main_courseA);
+            setupCourseView(infoAllA, content_main_courseA);
             viewList.add(content_main_courseA);
             infoAllList.add(infoAllA);
             json.add("jsonA");
@@ -227,7 +229,7 @@ public class MainActivity extends AppCompatActivity
         if (!TextUtils.isEmpty(jsonB)) {
             Gson gson = new Gson();
             infoAllB = gson.fromJson(jsonB, InfoAll.class);
-            getCourseLayout(infoAllB, content_main_courseB);
+            setupCourseView(infoAllB, content_main_courseB);
             viewList.add(content_main_courseB);
             infoAllList.add(infoAllB);
             json.add("jsonB");
@@ -235,7 +237,8 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    public void getCourseLayout(InfoAll infoAll, View view) {
+    public void setupCourseView(InfoAll infoAll, View view) {
+
         List<Course> courseList = infoAll.getCourse_all();
         for (Course c : courseList) {
             int i = c.getC_w();
@@ -307,8 +310,8 @@ public class MainActivity extends AppCompatActivity
         return (int) (px / scale + 0.5f);
     }
 
-    public void setupMenu(Menu menu){
-        int i=0;
+    public void setupMenu(Menu menu) {
+        int i = 0;
         for (InfoAll ia : infoAllList) {
             s[i] = ia.getStudent();
             menu.add(0, i + 1, i + 1, "注销" + s[i].getS_n() + "的课表");
@@ -341,26 +344,27 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == 1) {
-            String s = json.get(0);
+            String s = json.get(id-1);
             if (deleteJson(s)) {
-                Toast.makeText(Mapplication.getContext(),  "成功删除！", Toast.LENGTH_SHORT).show();
-                mViewPager.removeView(viewList.get(0));
-                mViewPager.setAdapter(refresh());
+                Toast.makeText(Mapplication.getContext(), "成功删除！", Toast.LENGTH_SHORT).show();
+                toolbar.getMenu().removeItem(id);
+                setupContainer();
+
             } else {
-                Toast.makeText(Mapplication.getContext(),  "删除失败！", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Mapplication.getContext(), "删除失败！", Toast.LENGTH_SHORT).show();
             }
 
 
             return true;
         }
         if (id == 2) {
-            String s = json.get(1);
+            String s = json.get(id-1);
             if (deleteJson(s)) {
-                Toast.makeText(Mapplication.getContext(),  "成功删除！", Toast.LENGTH_SHORT).show();
-                mViewPager.removeView(viewList.get(1));
-                refresh();
+                Toast.makeText(Mapplication.getContext(), "成功删除！", Toast.LENGTH_SHORT).show();
+                toolbar.getMenu().removeItem(id);
+                setupContainer();
             } else {
-                Toast.makeText(Mapplication.getContext(),"删除失败！", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Mapplication.getContext(), "删除失败！", Toast.LENGTH_SHORT).show();
             }
 
             return true;
