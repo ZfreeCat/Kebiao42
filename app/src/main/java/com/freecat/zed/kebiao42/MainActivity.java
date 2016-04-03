@@ -4,14 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
-import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,8 +19,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,12 +26,9 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.security.Permission;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,28 +41,22 @@ public class MainActivity extends AppCompatActivity
      */
     private ViewPager mViewPager;
 
-    private List<View> viewList;//view数组
+    private List<View> viewList;
 
-    private InfoAll infoAll, infoAllA, infoAllB;
+    private InfoAll infoAll;
     private List<InfoAll> infoAllList;
 
 
     private String jsonA, jsonB;
     private List<String> json;
 
-    private int itemHeight = 56;
-    private int marTop = 2;
-    private int marLeft = 2;
+    private final String A = "jsonA";
+    private final String B = "jsonB";
+
 
     private int[] rlId = {R.id.weekPanel_1, R.id.weekPanel_2, R.id.weekPanel_3, R.id.weekPanel_4, R.id.weekPanel_5, R.id.weekPanel_6, R.id.weekPanel_7};
     private RelativeLayout[] rl = new RelativeLayout[7];
-    private View content_main_courseA;
-    private View content_main_courseB;
 
-
-    private Student s1 = new Student();
-    private Student s2 = new Student();
-    private Student[] s = {s1, s2};
 
     private Toolbar toolbar;
 
@@ -84,12 +68,8 @@ public class MainActivity extends AppCompatActivity
 
 
         json = new ArrayList<>();
-        viewList = new ArrayList<>();// 将要分页显示的View装入数组中
+        viewList = new ArrayList<>();
         infoAllList = new ArrayList<>();
-
-        LayoutInflater inflater = getLayoutInflater();
-        content_main_courseA = inflater.inflate(R.layout.content_main_course, null);
-        content_main_courseB = inflater.inflate(R.layout.content_main_course, null);
 
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -111,6 +91,7 @@ public class MainActivity extends AppCompatActivity
 
             }
 
+            //show student info
             public void onDrawerOpened(View drawerView) {
                 TextView tv1 = (TextView) findViewById(R.id.nhm_a);
                 TextView tv2 = (TextView) findViewById(R.id.nhm_b);
@@ -126,13 +107,13 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        /**
-         *
-         */
         setupContainer();
 
     }
 
+    /**
+     * set up the viewpager
+     */
     public void setupContainer() {
         checkJsonIsEmpty4Layout();
 
@@ -187,57 +168,83 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+
+    /**
+     * check if there exists saved file 4 another login
+     */
     public void checkJsonIsEmpty4Login() {
-        jsonA = loadJson("jsonA");
-        jsonB = loadJson("jsonB");
+        jsonA = loadJson(A);
+        jsonB = loadJson(B);
 
         if (TextUtils.isEmpty(jsonA)) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            intent.putExtra("filename", "jsonA");
+            intent.putExtra("filename", A);
             startActivity(intent);
             finish();
         }
         if (TextUtils.isEmpty(jsonB)) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            intent.putExtra("filename", "jsonB");
+            intent.putExtra("filename", B);
             startActivity(intent);
             finish();
         }
     }
 
+
+    /**
+     * check if there exists saved file 4 layout
+     */
     public void checkJsonIsEmpty4Layout() {
-        jsonA = loadJson("jsonA");
-        jsonB = loadJson("jsonB");
+
+        jsonA = loadJson(A);
+        jsonB = loadJson(B);
         infoAllList.clear();
         viewList.clear();
         json.clear();
 
         if (TextUtils.isEmpty(jsonA) && TextUtils.isEmpty(jsonB)) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            intent.putExtra("filename", "jsonA");
+            intent.putExtra("filename", A);
             startActivity(intent);
             finish();
         }
         if (!TextUtils.isEmpty(jsonA)) {
-            Gson gson = new Gson();
-            infoAllA = gson.fromJson(jsonA, InfoAll.class);
-            setupCourseView(infoAllA, content_main_courseA);
-            viewList.add(content_main_courseA);
-            infoAllList.add(infoAllA);
-            json.add("jsonA");
+            useJson2getView(jsonA, A);
         }
         if (!TextUtils.isEmpty(jsonB)) {
-            Gson gson = new Gson();
-            infoAllB = gson.fromJson(jsonB, InfoAll.class);
-            setupCourseView(infoAllB, content_main_courseB);
-            viewList.add(content_main_courseB);
-            infoAllList.add(infoAllB);
-            json.add("jsonB");
+            useJson2getView(jsonB, B);
+
         }
     }
 
+    /**
+     * inflate a view by content_main_course.xml
+     *
+     * @param jsonData
+     * @param finalString
+     */
+    public void useJson2getView(String jsonData, String finalString) {
+        LayoutInflater inflater = getLayoutInflater();
+        View content_main_course = inflater.inflate(R.layout.content_main_course, null);
+        Gson gson = new Gson();
+        InfoAll infoAll = gson.fromJson(jsonData, InfoAll.class);
+        setupCourseView(infoAll, content_main_course);
+        viewList.add(content_main_course);
+        infoAllList.add(infoAll);
+        json.add(finalString);
+    }
 
+
+    /**
+     * set up a view by a given infoAll
+     *
+     * @param infoAll
+     * @param view
+     */
     public void setupCourseView(InfoAll infoAll, View view) {
+        final int itemHeight = 54;
+        final int marTop = 2;
+        final int marLeft = 2;
 
         List<Course> courseList = infoAll.getCourse_all();
         for (Course c : courseList) {
@@ -251,13 +258,18 @@ public class MainActivity extends AppCompatActivity
             tv.setTextSize(12);
             tv.setTextColor(getResources().getColor(R.color.courseTextColor));
             tv.setText(c.getC_n() + "\n" + c.getC_l() + "\n" + c.getC_t());
-            //tv.setBackgroundColor(getResources().getColor(R.color.classIndex));
             tv.setBackground(getResources().getDrawable(R.drawable.tvshape));
             rl[i].addView(tv);
 
         }
     }
 
+    /**
+     * load json data by a given filename
+     *
+     * @param filename
+     * @return
+     */
     public String loadJson(String filename) {
         FileInputStream in = null;
         BufferedReader reader = null;
@@ -288,10 +300,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * 删除单个文件
+     * delete json data by a given filename
      *
-     * @param filename 被删除文件的文件名
-     * @return 文件删除成功返回true，否则返回false
+     * @param filename
+     * @return if deleted returns true，else returns false
      */
     public boolean deleteJson(String filename) {
         if (Mapplication.getContext().deleteFile(filename)) {
@@ -310,14 +322,6 @@ public class MainActivity extends AppCompatActivity
         return (int) (px / scale + 0.5f);
     }
 
-    public void setupMenu(Menu menu) {
-        int i = 0;
-        for (InfoAll ia : infoAllList) {
-            s[i] = ia.getStudent();
-            menu.add(0, i + 1, i + 1, "注销" + s[i].getS_n() + "的课表");
-            i++;
-        }
-    }
 
     @Override
     public void onBackPressed() {
@@ -331,7 +335,15 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        setupMenu(menu);
+        int i = 0;
+        Student s1 = new Student();
+        Student s2 = new Student();
+        Student[] s = {s1, s2};
+        for (InfoAll ia : infoAllList) {
+            s[i] = ia.getStudent();
+            menu.add(0, i + 1, i + 1, "注销" + s[i].getS_n() + "的课表");
+            i++;
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -344,27 +356,26 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == 1) {
-            String s = json.get(id-1);
+            String s = json.get(0);
             if (deleteJson(s)) {
-                Toast.makeText(Mapplication.getContext(), "成功删除！", Toast.LENGTH_SHORT).show();
-                toolbar.getMenu().removeItem(id);
+                Toast.makeText(Mapplication.getContext(), getString(R.string.delete_successful), Toast.LENGTH_SHORT).show();
+                toolbar.getMenu().removeItem(1);
                 setupContainer();
-
             } else {
-                Toast.makeText(Mapplication.getContext(), "删除失败！", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Mapplication.getContext(), getString(R.string.delete_failed), Toast.LENGTH_SHORT).show();
             }
 
 
             return true;
         }
         if (id == 2) {
-            String s = json.get(id-1);
+            String s = json.get(1);
             if (deleteJson(s)) {
-                Toast.makeText(Mapplication.getContext(), "成功删除！", Toast.LENGTH_SHORT).show();
-                toolbar.getMenu().removeItem(id);
+                Toast.makeText(Mapplication.getContext(), getString(R.string.delete_successful), Toast.LENGTH_SHORT).show();
+                toolbar.getMenu().removeItem(2);
                 setupContainer();
             } else {
-                Toast.makeText(Mapplication.getContext(), "删除失败！", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Mapplication.getContext(), getString(R.string.delete_failed), Toast.LENGTH_SHORT).show();
             }
 
             return true;

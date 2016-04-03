@@ -4,14 +4,13 @@ package com.freecat.zed.kebiao42;
  * Created by Mr.Z on 2016/3/22.
  */
 public class Course {
-    /*
-    *"c_l": "\u4e1c\u6559\u4e00\u5317207",
-    * "c_p_s": 1,
-    * "c_p": 2,
-     * "c_t": "\u6768\u6500\u6500",
-     * "c_w": 1,
-     * "c_n": "\u9ad8\u7b49\u6570\u5b66A2"},
-     *
+    /**
+     * c_l 4 course location
+     * c_t 4 course teacher
+     * c_n 4 course name
+     * c_p 4 course period(course length)
+     * c_p_s 4 course period start
+     * c_w 4 course weekday
      */
     String c_l,c_t,c_n;
     Integer c_p_s,c_p,c_w;

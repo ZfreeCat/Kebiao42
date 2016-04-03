@@ -4,12 +4,12 @@ package com.freecat.zed.kebiao42;
  * Created by Mr.Z on 2016/3/22.
  */
 public class Student {
-    /*
-    *"s_i": "139034202",
-    * "s_cN": "\u8f6f131",
-    * "s_s": "\u8ba1\u7b97\u673a\u79d1\u5b66\u4e0e\u6280\u672f\u5b66\u9662",
-    * "s_c": "\u8f6f\u4ef6\u5de5\u7a0b",
-     * "s_n": "\u7ae0\u4f1f"
+    /**
+     * s_i 4 student id
+     * s_cN 4 student class number
+     * s_s 4 student school
+     * s_c 4 student class
+     * s_n 4 student name
      */
     String s_i,s_cN,s_s,s_c,s_n;
 

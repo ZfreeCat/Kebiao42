@@ -6,7 +6,13 @@ import java.util.List;
  * Created by Mr.Z on 2016/3/22.
  */
 public class InfoAll {
+    /**
+     * this class contains
+     * course_all 4 all course information
+     * student 4 student information
+     */
     List<Course> course_all;
+    Student student;
 
     public List<Course> getCourse_all() {
         return course_all;
@@ -16,7 +22,6 @@ public class InfoAll {
         this.course_all = course_all;
     }
 
-    Student student;
 
     public Student getStudent() {
         return student;

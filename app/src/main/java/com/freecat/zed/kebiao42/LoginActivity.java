@@ -19,7 +19,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -34,7 +33,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * A login screen that offers login via email/password.
+ * A login screen that offers login via id/password.
  */
 public class LoginActivity extends AppCompatActivity {
 
@@ -49,8 +48,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mIdView;
     private EditText mPasswordView;
     private View mProgressView;
-    private Button mButtonS;
-    private Button mButtonQ;
     private LinearLayout linearLayout;
 
     @Override
@@ -61,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = getIntent();
         filename = intent.getStringExtra("filename");
 
-        mButtonS = (Button) findViewById(R.id.al_start);
+        Button mButtonS = (Button) findViewById(R.id.al_start);//start button
         mButtonS.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,15 +69,18 @@ public class LoginActivity extends AppCompatActivity {
                 mPasswordView = (EditText) linearLayout.findViewById(R.id.password);
                 mProgressView = linearLayout.findViewById(R.id.login_progress);
 
+
+                //set up an alertDialog to login
                 new AlertDialog.Builder(LoginActivity.this).setTitle("登录").setView(linearLayout).setPositiveButton("登录", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         attemptLogin();
+                        //this try-catch intents to keep the alertDialog open
                         try {
                             Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing");
                             field.setAccessible(true);
-                            //设置mShowing值，欺骗android系统
-                            field.set(dialog, false);  //需要关闭的时候 将这个参数设置为true 他就会自动关闭了
+                            //set mShowing 2 fool android
+                            field.set(dialog, false);  //set mShowing true when u want it closed
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -91,8 +91,8 @@ public class LoginActivity extends AppCompatActivity {
                         try {
                             Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing");
                             field.setAccessible(true);
-                            //设置mShowing值，欺骗android系统
-                            field.set(dialog, true);  //需要关闭的时候 将这个参数设置为true 他就会自动关闭了
+                            //set mShowing 2 fool android
+                            field.set(dialog, true);  //set mShowing true when u want it closed
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -102,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
 
-        mButtonQ = (Button) findViewById(R.id.al_quit);
+        Button mButtonQ = (Button) findViewById(R.id.al_quit);//quit button
         mButtonQ.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,7 +126,7 @@ public class LoginActivity extends AppCompatActivity {
 
     /**
      * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
+     * If there are form errors (invalid id, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
@@ -145,20 +145,20 @@ public class LoginActivity extends AppCompatActivity {
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid password, if the user entered one.
+        // Check for a empty password, if the user entered one.
         if (TextUtils.isEmpty(password)) {
             mPasswordView.setError(getString(R.string.error_field_required));
             focusView = mPasswordView;
             cancel = true;
         }
-
+        //check for a valid id, if the user entered one.
         if (id.length() != 9) {
             mIdView.setError(getString(R.string.error_incorrect_format_id));
             focusView = mIdView;
             cancel = true;
         }
 
-        // Check for a valid email address.
+        // Check for a empty id.
         if (TextUtils.isEmpty(id)) {
             mIdView.setError(getString(R.string.error_field_required));
             focusView = mIdView;
@@ -173,7 +173,7 @@ public class LoginActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             if (!isNetworkConnected()) {
-                Toast.makeText(Mapplication.getContext(), "无网络连接！请检查您的网络！", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Mapplication.getContext(), getString(R.string.bad_network), Toast.LENGTH_SHORT).show();
             } else {
                 mProgressView.setVisibility(View.VISIBLE);
                 mAuthTask = new UserLoginTask(id, password);
@@ -184,7 +184,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     /**
-     * Represents an asynchronous login/registration task used to authenticate
+     * Represents an asynchronous login task used to authenticate
      * the user.
      */
     public class UserLoginTask extends AsyncTask<Void, Void, String> {
@@ -203,9 +203,11 @@ public class LoginActivity extends AppCompatActivity {
             // TODO: attempt authentication against a network service.
 
 
+            //this url ref to a python which uses to post json data of a valid student account on my SAE
             String s_url = "http://1.freecat0706.applinzi.com?id=" + mId + "&pwd=" + mPassword;
             HttpURLConnection connection = null;
 
+            //use httpURLConnection to fetch data
             try {
                 URL url = new URL(s_url);
                 connection = (HttpURLConnection) url.openConnection();
@@ -230,19 +232,23 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
 
+            //this is the fetched data in string form
             return response.toString();
         }
 
         @Override
-        protected void onPostExecute(final String json) {
+        protected void onPostExecute(final String data) {
             mAuthTask = null;
             mProgressView.setVisibility(View.GONE);
 
-            if (json.equals("bad information")) {
+            //to analyse the data that fetched
+            //according to the python that i wrote
+            //if not gets a valid student account, it will return "bad information"
+            if (data.equals("bad information")) {
                 mPasswordView.setError(getString(R.string.error_incorrect_idORpwd));
                 mPasswordView.requestFocus();
             } else {
-                saveJson(filename, json);
+                saveJson(filename, data);
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
@@ -257,7 +263,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * 检测网络是否可用
+     * check for network
      *
      * @return
      */
@@ -267,12 +273,12 @@ public class LoginActivity extends AppCompatActivity {
         return ni != null && ni.isConnectedOrConnecting();
     }
 
-    /**
-     * 获取当前网络类型
-     *
-     * @return 0：没有网络   1：WIFI网络   2：WAP网络    3：NET网络
-     */
 
+    /**
+     * get the type of the current network(i have not used it yet)
+     *
+     * @return 0：no network   1：WIFI   2：WAP    3：NET
+     */
     public static final int NETTYPE_WIFI = 0x01;
     public static final int NETTYPE_CMWAP = 0x02;
     public static final int NETTYPE_CMNET = 0x03;
@@ -300,6 +306,12 @@ public class LoginActivity extends AppCompatActivity {
         return netType;
     }
 
+    /**
+     * use openFileOutput to save file
+     *
+     * @param filename
+     * @param file
+     */
     public void saveJson(String filename, String file) {
         FileOutputStream out = null;
         BufferedWriter writer = null;
