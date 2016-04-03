@@ -115,57 +115,59 @@ public class MainActivity extends AppCompatActivity
      * set up the viewpager
      */
     public void setupContainer() {
-        checkJsonIsEmpty4Layout();
 
-        PagerAdapter pagerAdapter = new PagerAdapter() {
+        if (checkJsonIsEmpty4Layout()) {
 
-            @Override
-            public boolean isViewFromObject(View arg0, Object arg1) {
-                // TODO Auto-generated method stub
-                return arg0 == arg1;
-            }
+            PagerAdapter pagerAdapter = new PagerAdapter() {
 
-            @Override
-            public int getCount() {
-                // TODO Auto-generated method stub
-                return viewList.size();
-            }
+                @Override
+                public boolean isViewFromObject(View arg0, Object arg1) {
+                    // TODO Auto-generated method stub
+                    return arg0 == arg1;
+                }
 
-            @Override
-            public void destroyItem(ViewGroup container, int position,
-                                    Object object) {
-                // TODO Auto-generated method stub
+                @Override
+                public int getCount() {
+                    // TODO Auto-generated method stub
+                    return viewList.size();
+                }
 
-            }
+                @Override
+                public void destroyItem(ViewGroup container, int position,
+                                        Object object) {
+                    // TODO Auto-generated method stub
 
-            @Override
-            public Object instantiateItem(ViewGroup container, int position) {
-                // TODO Auto-generated method stub
-                container.addView(viewList.get(position));
-                return viewList.get(position);
-            }
-        };
-        // Set up the ViewPager with the sections adapter.
+                }
+
+                @Override
+                public Object instantiateItem(ViewGroup container, int position) {
+                    // TODO Auto-generated method stub
+                    container.addView(viewList.get(position));
+                    return viewList.get(position);
+                }
+            };
+            // Set up the ViewPager with the sections adapter.
 
 
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(pagerAdapter);
-        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                infoAll = infoAllList.get(position);
-            }
+            mViewPager = (ViewPager) findViewById(R.id.container);
+            mViewPager.setAdapter(pagerAdapter);
+            mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                    infoAll = infoAllList.get(position);
+                }
 
-            @Override
-            public void onPageSelected(int position) {
+                @Override
+                public void onPageSelected(int position) {
 
-            }
+                }
 
-            @Override
-            public void onPageScrollStateChanged(int state) {
+                @Override
+                public void onPageScrollStateChanged(int state) {
 
-            }
-        });
+                }
+            });
+        }
     }
 
 
@@ -181,8 +183,7 @@ public class MainActivity extends AppCompatActivity
             intent.putExtra("filename", A);
             startActivity(intent);
             finish();
-        }
-        if (TextUtils.isEmpty(jsonB)) {
+        } else if (TextUtils.isEmpty(jsonB)) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             intent.putExtra("filename", B);
             startActivity(intent);
@@ -194,8 +195,9 @@ public class MainActivity extends AppCompatActivity
     /**
      * check if there exists saved file 4 layout
      */
-    public void checkJsonIsEmpty4Layout() {
+    public boolean checkJsonIsEmpty4Layout() {
 
+        boolean flag = false;
         jsonA = loadJson(A);
         jsonB = loadJson(B);
         infoAllList.clear();
@@ -207,14 +209,17 @@ public class MainActivity extends AppCompatActivity
             intent.putExtra("filename", A);
             startActivity(intent);
             finish();
+            flag = false;
         }
         if (!TextUtils.isEmpty(jsonA)) {
             useJson2getView(jsonA, A);
+            flag = true;
         }
         if (!TextUtils.isEmpty(jsonB)) {
             useJson2getView(jsonB, B);
-
+            flag = true;
         }
+        return flag;
     }
 
     /**
