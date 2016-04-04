@@ -52,6 +52,10 @@ public class MainActivity extends AppCompatActivity
 
     private final String A = "jsonA";
     private final String B = "jsonB";
+    private final String C = "jsonC";
+
+    private final String actionA = "course";
+    private final String actionB = "grade";
 
 
     private int[] rlId = {R.id.weekPanel_1, R.id.weekPanel_2, R.id.weekPanel_3, R.id.weekPanel_4, R.id.weekPanel_5, R.id.weekPanel_6, R.id.weekPanel_7};
@@ -170,6 +174,13 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public static void actionStart(Context context, String data1, String data2) {
+        Intent intent = new Intent(context, LoginActivity.class);
+        intent.putExtra("filename", data1);
+        intent.putExtra("action", data2);
+        context.startActivity(intent);
+    }
+
 
     /**
      * check if there exists saved file 4 another login
@@ -179,15 +190,17 @@ public class MainActivity extends AppCompatActivity
         jsonB = loadJson(B);
 
         if (TextUtils.isEmpty(jsonA)) {
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            actionStart(MainActivity.this, A, actionA);
+            /*Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             intent.putExtra("filename", A);
-            startActivity(intent);
+            startActivity(intent);*/
             finish();
         } else if (TextUtils.isEmpty(jsonB)) {
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            actionStart(MainActivity.this, B, actionA);
+            /*Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             intent.putExtra("filename", B);
             startActivity(intent);
-            finish();
+            finish();*/
         }
     }
 
@@ -205,9 +218,10 @@ public class MainActivity extends AppCompatActivity
         json.clear();
 
         if (TextUtils.isEmpty(jsonA) && TextUtils.isEmpty(jsonB)) {
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            actionStart(MainActivity.this, A, actionA);
+            /*Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             intent.putExtra("filename", A);
-            startActivity(intent);
+            startActivity(intent);*/
             finish();
             flag = false;
         }
@@ -396,6 +410,9 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_grade) {
+            actionStart(MainActivity.this, C, actionB);
+            /*Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);*/
 
         } else if (id == R.id.nav_test) {
 

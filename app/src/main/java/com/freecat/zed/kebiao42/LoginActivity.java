@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.AsyncTask;
@@ -41,14 +42,18 @@ public class LoginActivity extends AppCompatActivity {
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
+    private final String actionA = "course";
+    private final String actionB = "grade";
+
     private UserLoginTask mAuthTask = null;
-    private String filename;
+    private String filename, action;
 
     // UI references.
     private EditText mIdView;
     private EditText mPasswordView;
     private View mProgressView;
     private LinearLayout linearLayout;
+    private TextInputLayout textInputLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +62,8 @@ public class LoginActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         filename = intent.getStringExtra("filename");
+        action = intent.getStringExtra("action");
+
 
         Button mButtonS = (Button) findViewById(R.id.al_start);//start button
         mButtonS.setOnClickListener(new OnClickListener() {
@@ -64,8 +71,18 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 // Set up the login form.
+
                 linearLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.bglayout_login, null);
                 mIdView = (EditText) linearLayout.findViewById(R.id.id);
+                textInputLayout = (TextInputLayout) linearLayout.findViewById(R.id.pwdWrapper);
+                switch (action) {
+                    case actionA:
+                        textInputLayout.setHint(getString(R.string.prompt_password));
+                        break;
+                    case actionB:
+                        textInputLayout.setHint(getString(R.string.prompt_idNum));
+                        break;
+                }
                 mPasswordView = (EditText) linearLayout.findViewById(R.id.password);
                 mProgressView = linearLayout.findViewById(R.id.login_progress);
 
@@ -191,7 +208,6 @@ public class LoginActivity extends AppCompatActivity {
 
         private final String mId;
         private final String mPassword;
-        private StringBuilder response;
 
         UserLoginTask(String id, String password) {
             mId = id;
@@ -201,39 +217,7 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
-
-
-            //this url ref to a python which uses to post json data of a valid student account on my SAE
-            String s_url = "http://1.freecat0706.applinzi.com?id=" + mId + "&pwd=" + mPassword;
-            HttpURLConnection connection = null;
-
-            //use httpURLConnection to fetch data
-            try {
-                URL url = new URL(s_url);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setConnectTimeout(8000);
-                connection.setReadTimeout(8000);
-                InputStream in = connection.getInputStream();
-                BufferedReader reader = new BufferedReader(new
-                        InputStreamReader(in));
-                response = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                return e.getMessage();
-            } finally {
-                if (connection != null) {
-                    connection.disconnect();
-                }
-            }
-
-            //this is the fetched data in string form
-            return response.toString();
+            return jsonGetter(mId, mPassword, action);
         }
 
         @Override
@@ -253,6 +237,7 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
+
         }
 
         @Override
@@ -260,6 +245,51 @@ public class LoginActivity extends AppCompatActivity {
             mAuthTask = null;
             mProgressView.setVisibility(View.GONE);
         }
+
+    }
+
+    public String jsonGetter(String mId, String mPassword, String mAction) {
+        StringBuilder response;
+        String mUrl = null;
+        switch (mAction) {
+            case (actionA):
+                mUrl = "http://1.freecat0706.applinzi.com/?";
+                break;
+            case (actionB):
+                mUrl = "http://1.freecat0706.applinzi.com/grade?";
+                break;
+        }
+        //this url ref to a python which uses to post json data of a valid student account on my SAE
+        String s_url = mUrl + "id=" + mId + "&pwd=" + mPassword;
+        HttpURLConnection connection = null;
+
+        //use httpURLConnection to fetch data
+        try {
+            URL url = new URL(s_url);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(8000);
+            connection.setReadTimeout(8000);
+            InputStream in = connection.getInputStream();
+            BufferedReader reader = new BufferedReader(new
+                    InputStreamReader(in));
+            response = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return e.getMessage();
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
+
+        //this is the fetched data in string form
+        return response.toString();
     }
 
     /**
