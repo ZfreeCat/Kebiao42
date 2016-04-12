@@ -1,9 +1,8 @@
 package com.freecat.zed.kebiao42;
 
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
+
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -14,12 +13,20 @@ import android.os.AsyncTask;
 
 
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
+
+import android.view.Display;
+import android.view.Gravity;
+
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
+import android.view.WindowManager;
+
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -29,7 +36,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -52,89 +58,72 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mIdView;
     private EditText mPasswordView;
     private View mProgressView;
-    private LinearLayout linearLayout;
     private TextInputLayout textInputLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.activity_login);
+
+        WindowManager windowManager = getWindowManager();
+        Display display = windowManager.getDefaultDisplay();
+        WindowManager.LayoutParams params = getWindow().getAttributes();
+        params.height = (int) (display.getHeight() * 0.5);
+        params.width = (int) (display.getWidth() * 0.9);
+        getWindow().setGravity(Gravity.CENTER);
 
         Intent intent = getIntent();
         filename = intent.getStringExtra("filename");
         action = intent.getStringExtra("action");
 
 
+        // Set up the login form.
+
+
+        mPasswordView = (EditText) findViewById(R.id.password);
+        mIdView = (EditText) findViewById(R.id.id);
+        textInputLayout = (TextInputLayout) findViewById(R.id.pwdWrapper);
+        switch (action) {
+            case actionA:
+                textInputLayout.setHint(getString(R.string.prompt_password));
+                break;
+            case actionB:
+                textInputLayout.setHint(getString(R.string.prompt_idNum));
+                mPasswordView.setInputType(InputType.TYPE_NUMBER_VARIATION_NORMAL);
+                break;
+            default:
+        }
+
+        mProgressView = findViewById(R.id.login_progress);
+
+
         Button mButtonS = (Button) findViewById(R.id.al_start);//start button
         mButtonS.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                // Set up the login form.
-
-                linearLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.bglayout_login, null);
-                mIdView = (EditText) linearLayout.findViewById(R.id.id);
-                textInputLayout = (TextInputLayout) linearLayout.findViewById(R.id.pwdWrapper);
-                switch (action) {
-                    case actionA:
-                        textInputLayout.setHint(getString(R.string.prompt_password));
-                        break;
-                    case actionB:
-                        textInputLayout.setHint(getString(R.string.prompt_idNum));
-                        break;
-                }
-                mPasswordView = (EditText) linearLayout.findViewById(R.id.password);
-                mProgressView = linearLayout.findViewById(R.id.login_progress);
-
-
-                //set up an alertDialog to login
-                new AlertDialog.Builder(LoginActivity.this).setTitle("登录").setView(linearLayout).setPositiveButton("登录", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        attemptLogin();
-                        //this try-catch intents to keep the alertDialog open
-                        try {
-                            Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing");
-                            field.setAccessible(true);
-                            //set mShowing 2 fool android
-                            field.set(dialog, false);  //set mShowing true when u want it closed
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        try {
-                            Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing");
-                            field.setAccessible(true);
-                            //set mShowing 2 fool android
-                            field.set(dialog, true);  //set mShowing true when u want it closed
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).show();
+                attemptLogin();
             }
         });
-
 
         Button mButtonQ = (Button) findViewById(R.id.al_quit);//quit button
         mButtonQ.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AlertDialog.Builder(LoginActivity.this).setTitle("确定退出？")
-                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                finish();
-                            }
-                        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).show();
+                finish();
+            }
+        });
+
+
+        Button mEmailSignInButton = (Button) findViewById(R.id.al_start);
+        mEmailSignInButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                attemptLogin();
             }
         });
 
@@ -227,14 +216,21 @@ public class LoginActivity extends AppCompatActivity {
 
             //to analyse the data that fetched
             //according to the python that i wrote
-            //if not gets a valid student account, it will return "bad information"
+            //if gets an invalid student account, it will return "bad information"
             if (data.equals("bad information")) {
                 mPasswordView.setError(getString(R.string.error_incorrect_idORpwd));
                 mPasswordView.requestFocus();
             } else {
-                saveJson(filename, data);
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
+
+                if (filename.equals("jsonC")) {
+                    Intent intent = new Intent(LoginActivity.this, GradeActivity.class);
+                    intent.putExtra("grade", data);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    saveJson(filename, data);
+                    setResult(RESULT_OK, intent);
+                }
                 finish();
             }
 

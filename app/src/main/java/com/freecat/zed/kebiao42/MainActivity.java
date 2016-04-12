@@ -43,10 +43,10 @@ public class MainActivity extends AppCompatActivity
 
     private List<View> viewList;
 
-    private InfoAll infoAll;
+    private InfoAll infoAll = null;
     private List<InfoAll> infoAllList;
 
-
+    private String json_selected = null;
     private String jsonA, jsonB;
     private List<String> json;
 
@@ -64,12 +64,24 @@ public class MainActivity extends AppCompatActivity
 
     private Toolbar toolbar;
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case 1:
+                if (resultCode == RESULT_OK) {
+                    setupContainer();
+                }
+                break;
+            default:
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         json = new ArrayList<>();
         viewList = new ArrayList<>();
@@ -92,6 +104,10 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
 
             public void onDrawerClosed(View view) {
+                TextView tv1 = (TextView) findViewById(R.id.nhm_a);
+                TextView tv2 = (TextView) findViewById(R.id.nhm_b);
+                tv1.setText("");
+                tv2.setText("");
 
             }
 
@@ -99,9 +115,11 @@ public class MainActivity extends AppCompatActivity
             public void onDrawerOpened(View drawerView) {
                 TextView tv1 = (TextView) findViewById(R.id.nhm_a);
                 TextView tv2 = (TextView) findViewById(R.id.nhm_b);
-                Student student = infoAll.getStudent();
-                tv1.setText(student.getS_n() + "@" + student.getS_cN());
-                tv2.setText(student.getS_s() + student.getS_c());
+                if (infoAll != null) {
+                    Student student = infoAll.getStudent();
+                    tv1.setText(student.getS_n() + "@" + student.getS_cN());
+                    tv2.setText(student.getS_s() + student.getS_c());
+                }
             }
         };
         drawer.setDrawerListener(toggle);
@@ -120,62 +138,67 @@ public class MainActivity extends AppCompatActivity
      */
     public void setupContainer() {
 
-        if (checkJsonIsEmpty4Layout()) {
+        checkJsonIsEmpty4Layout();
 
-            PagerAdapter pagerAdapter = new PagerAdapter() {
+        PagerAdapter pagerAdapter = new PagerAdapter() {
 
-                @Override
-                public boolean isViewFromObject(View arg0, Object arg1) {
-                    // TODO Auto-generated method stub
-                    return arg0 == arg1;
-                }
+            @Override
+            public boolean isViewFromObject(View arg0, Object arg1) {
+                // TODO Auto-generated method stub
+                return arg0 == arg1;
+            }
 
-                @Override
-                public int getCount() {
-                    // TODO Auto-generated method stub
-                    return viewList.size();
-                }
+            @Override
+            public int getCount() {
+                // TODO Auto-generated method stub
+                return viewList.size();
+            }
 
-                @Override
-                public void destroyItem(ViewGroup container, int position,
-                                        Object object) {
-                    // TODO Auto-generated method stub
+            @Override
+            public void destroyItem(ViewGroup container, int position,
+                                    Object object) {
+                // TODO Auto-generated method stub
 
-                }
+            }
 
-                @Override
-                public Object instantiateItem(ViewGroup container, int position) {
-                    // TODO Auto-generated method stub
-                    container.addView(viewList.get(position));
-                    return viewList.get(position);
-                }
-            };
-            // Set up the ViewPager with the sections adapter.
+            @Override
+            public Object instantiateItem(ViewGroup container, int position) {
+                // TODO Auto-generated method stub
+                container.addView(viewList.get(position));
+                return viewList.get(position);
+            }
+        };
+        // Set up the ViewPager with the sections adapter.
 
 
-            mViewPager = (ViewPager) findViewById(R.id.container);
-            mViewPager.setAdapter(pagerAdapter);
-            mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                @Override
-                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager.setAdapter(pagerAdapter);
+        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                if (infoAllList.size() != 0) {
                     infoAll = infoAllList.get(position);
                 }
-
-                @Override
-                public void onPageSelected(int position) {
-
+                if (json.size() != 0) {
+                    json_selected = json.get(position);
                 }
+            }
 
-                @Override
-                public void onPageScrollStateChanged(int state) {
+            @Override
+            public void onPageSelected(int position) {
 
-                }
-            });
-        }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
-    public static void actionStart(Context context, String data1, String data2) {
-        Intent intent = new Intent(context, LoginActivity.class);
+
+    public static void actionStart(Context context, Class C, String data1, String data2) {
+        Intent intent = new Intent(context, C);
         intent.putExtra("filename", data1);
         intent.putExtra("action", data2);
         context.startActivity(intent);
@@ -190,17 +213,17 @@ public class MainActivity extends AppCompatActivity
         jsonB = loadJson(B);
 
         if (TextUtils.isEmpty(jsonA)) {
-            actionStart(MainActivity.this, A, actionA);
-            /*Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            /*actionStart(MainActivity.this,LoginActivity.class, A, actionA);*/
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             intent.putExtra("filename", A);
-            startActivity(intent);*/
-            finish();
+            intent.putExtra("action", actionA);
+            startActivityForResult(intent, 1);
         } else if (TextUtils.isEmpty(jsonB)) {
-            actionStart(MainActivity.this, B, actionA);
-            /*Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            /*actionStart(MainActivity.this,LoginActivity.class, B, actionA);*/
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             intent.putExtra("filename", B);
-            startActivity(intent);
-            finish();*/
+            intent.putExtra("action", actionA);
+            startActivityForResult(intent, 1);
         }
     }
 
@@ -208,9 +231,9 @@ public class MainActivity extends AppCompatActivity
     /**
      * check if there exists saved file 4 layout
      */
-    public boolean checkJsonIsEmpty4Layout() {
+    public void checkJsonIsEmpty4Layout() {
 
-        boolean flag = false;
+
         jsonA = loadJson(A);
         jsonB = loadJson(B);
         infoAllList.clear();
@@ -218,22 +241,21 @@ public class MainActivity extends AppCompatActivity
         json.clear();
 
         if (TextUtils.isEmpty(jsonA) && TextUtils.isEmpty(jsonB)) {
-            actionStart(MainActivity.this, A, actionA);
-            /*Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             intent.putExtra("filename", A);
-            startActivity(intent);*/
-            finish();
-            flag = false;
+            intent.putExtra("action", actionA);
+            startActivityForResult(intent, 1);
+
         }
         if (!TextUtils.isEmpty(jsonA)) {
             useJson2getView(jsonA, A);
-            flag = true;
+
         }
         if (!TextUtils.isEmpty(jsonB)) {
             useJson2getView(jsonB, B);
-            flag = true;
+
         }
-        return flag;
+
     }
 
     /**
@@ -278,6 +300,7 @@ public class MainActivity extends AppCompatActivity
             tv.setTextColor(getResources().getColor(R.color.courseTextColor));
             tv.setText(c.getC_n() + "\n" + c.getC_l() + "\n" + c.getC_t());
             tv.setBackground(getResources().getDrawable(R.drawable.tvshape));
+            tv.getBackground().setAlpha(200);
             rl[i].addView(tv);
 
         }
@@ -354,16 +377,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        int i = 0;
-        Student s1 = new Student();
-        Student s2 = new Student();
-        Student[] s = {s1, s2};
-        for (InfoAll ia : infoAllList) {
-            s[i] = ia.getStudent();
-            menu.add(0, i + 1, i + 1, "注销" + s[i].getS_n() + "的课表");
-            i++;
-        }
-        return super.onCreateOptionsMenu(menu);
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
     @Override
@@ -374,30 +390,18 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == 1) {
-            String s = json.get(0);
-            if (deleteJson(s)) {
-                Toast.makeText(Mapplication.getContext(), getString(R.string.delete_successful), Toast.LENGTH_SHORT).show();
-                toolbar.getMenu().removeItem(1);
-                setupContainer();
-            } else {
-                Toast.makeText(Mapplication.getContext(), getString(R.string.delete_failed), Toast.LENGTH_SHORT).show();
-            }
-
-
-            return true;
-        }
-        if (id == 2) {
-            String s = json.get(1);
-            if (deleteJson(s)) {
-                Toast.makeText(Mapplication.getContext(), getString(R.string.delete_successful), Toast.LENGTH_SHORT).show();
-                toolbar.getMenu().removeItem(2);
-                setupContainer();
-            } else {
-                Toast.makeText(Mapplication.getContext(), getString(R.string.delete_failed), Toast.LENGTH_SHORT).show();
-            }
-
-            return true;
+        switch (id) {
+            case R.id.action_layout:
+                if (json_selected != null) {
+                    if (deleteJson(json_selected)) {
+                        Toast.makeText(Mapplication.getContext(), getString(R.string.delete_successful), Toast.LENGTH_SHORT).show();
+                        setupContainer();
+                    } else {
+                        Toast.makeText(Mapplication.getContext(), getString(R.string.delete_failed), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+            default:
         }
 
         return super.onOptionsItemSelected(item);
@@ -410,11 +414,12 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_grade) {
-            actionStart(MainActivity.this, C, actionB);
+            actionStart(MainActivity.this, LoginActivity.class, C, actionB);
             /*Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);*/
 
         } else if (id == R.id.nav_test) {
+            actionStart(MainActivity.this, GradeActivity.class, null, null);
 
         } else if (id == R.id.nav_course) {
 

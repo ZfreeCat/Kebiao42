@@ -17,7 +17,7 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/FloatTheme" />
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
@@ -28,6 +28,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".GradeActivity"
+            android:label="@string/title_activity_grade"
+            android:theme="@style/FloatTheme"/>
+
     </application>
 
 </manifest>

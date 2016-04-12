@@ -17,7 +17,7 @@
             android:layout_height="20dp"
             android:layout_marginLeft="@dimen/weekItemMarLeft"
             android:layout_weight="0.5"
-            android:background="@color/classIndex"
+            android:background="@android:color/transparent"
             android:gravity="center_horizontal|center_vertical"
             android:text="" />
 
@@ -25,57 +25,64 @@
             android:layout_width="0dp"
             android:layout_height="20dp"
             android:layout_weight="1"
-            android:background="@color/classIndex"
+            android:background="@android:color/transparent"
             android:gravity="center_horizontal|center_vertical"
-            android:text="周一" />
+            android:text="周一"
+            android:textColor="#ffffff" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="20dp"
             android:layout_weight="1"
-            android:background="@color/classIndex"
+            android:background="@android:color/transparent"
             android:gravity="center_horizontal|center_vertical"
-            android:text="周二" />
+            android:text="周二"
+            android:textColor="#ffffff"/>
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="20dp"
             android:layout_weight="1"
-            android:background="@color/classIndex"
+            android:background="@android:color/transparent"
             android:gravity="center_horizontal|center_vertical"
-            android:text="周三" />
+            android:text="周三"
+            android:textColor="#ffffff"/>
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="20dp"
             android:layout_weight="1"
-            android:background="@color/classIndex"
+            android:background="@android:color/transparent"
             android:gravity="center_horizontal|center_vertical"
-            android:text="周四" />
+            android:text="周四"
+            android:textColor="#ffffff"/>
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="20dp"
             android:layout_weight="1"
-            android:background="@color/classIndex"
+            android:background="@android:color/transparent"
             android:gravity="center_horizontal|center_vertical"
-            android:text="周五" />
+            android:text="周五"
+            android:textColor="#ffffff"/>
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="20dp"
             android:layout_weight="1"
-            android:background="@color/classIndex"
+            android:background="@android:color/transparent"
             android:gravity="center_horizontal|center_vertical"
-            android:text="周六" />
+            android:text="周六"
+            android:textColor="#ffffff"/>
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="20dp"
             android:layout_weight="1"
-            android:background="@color/classIndex"
+            android:background="@android:color/transparent"
             android:gravity="center_horizontal|center_vertical"
-            android:text="周日" />
+            android:text="周日"
+            android:textColor="#ffffff"/>
 
     </LinearLayout>
 
@@ -102,99 +109,110 @@
                     android:layout_height="@dimen/weekItemHeight"
                     android:layout_marginLeft="@dimen/weekItemMarLeft"
                     android:layout_marginTop="@dimen/weekItemMarTop"
-                    android:background="@color/classIndex"
+                    android:background="@android:color/transparent"
                     android:gravity="center_horizontal|center_vertical"
-                    android:text="1" />
+                    android:text="1"
+                    android:textColor="#ffffff"/>
 
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="@dimen/weekItemHeight"
                     android:layout_marginLeft="@dimen/weekItemMarLeft"
                     android:layout_marginTop="@dimen/weekItemMarTop"
-                    android:background="@color/classIndex"
+                    android:background="@android:color/transparent"
                     android:gravity="center_horizontal|center_vertical"
-                    android:text="2" />
+                    android:text="2"
+                    android:textColor="#ffffff"/>
 
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="@dimen/weekItemHeight"
                     android:layout_marginLeft="@dimen/weekItemMarLeft"
                     android:layout_marginTop="@dimen/weekItemMarTop"
-                    android:background="@color/classIndex"
+                    android:background="@android:color/transparent"
                     android:gravity="center_horizontal|center_vertical"
-                    android:text="3" />
+                    android:text="3"
+                    android:textColor="#ffffff"/>
 
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="@dimen/weekItemHeight"
                     android:layout_marginLeft="@dimen/weekItemMarLeft"
                     android:layout_marginTop="@dimen/weekItemMarTop"
-                    android:background="@color/classIndex"
+                    android:background="@android:color/transparent"
                     android:gravity="center_horizontal|center_vertical"
-                    android:text="4" />
+                    android:text="4"
+                    android:textColor="#ffffff"/>
 
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="@dimen/weekItemHeight"
                     android:layout_marginLeft="@dimen/weekItemMarLeft"
                     android:layout_marginTop="@dimen/weekItemMarTop"
-                    android:background="@color/classIndex"
+                    android:background="@android:color/transparent"
                     android:gravity="center_horizontal|center_vertical"
-                    android:text="5" />
+                    android:text="5"
+                    android:textColor="#ffffff"/>
 
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="@dimen/weekItemHeight"
                     android:layout_marginLeft="@dimen/weekItemMarLeft"
                     android:layout_marginTop="@dimen/weekItemMarTop"
-                    android:background="@color/classIndex"
+                    android:background="@android:color/transparent"
                     android:gravity="center_horizontal|center_vertical"
-                    android:text="6" />
+                    android:text="6"
+                    android:textColor="#ffffff"/>
 
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="@dimen/weekItemHeight"
                     android:layout_marginLeft="@dimen/weekItemMarLeft"
                     android:layout_marginTop="@dimen/weekItemMarTop"
-                    android:background="@color/classIndex"
+                    android:background="@android:color/transparent"
                     android:gravity="center_horizontal|center_vertical"
-                    android:text="7" />
+                    android:text="7"
+                    android:textColor="#ffffff"/>
 
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="@dimen/weekItemHeight"
                     android:layout_marginLeft="@dimen/weekItemMarLeft"
                     android:layout_marginTop="@dimen/weekItemMarTop"
-                    android:background="@color/classIndex"
+                    android:background="@android:color/transparent"
                     android:gravity="center_horizontal|center_vertical"
-                    android:text="8" />
+                    android:text="8"
+                    android:textColor="#ffffff"/>
 
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="@dimen/weekItemHeight"
                     android:layout_marginLeft="@dimen/weekItemMarLeft"
                     android:layout_marginTop="@dimen/weekItemMarTop"
-                    android:background="@color/classIndex"
+                    android:background="@android:color/transparent"
                     android:gravity="center_horizontal|center_vertical"
-                    android:text="9" />
+                    android:text="9"
+                    android:textColor="#ffffff"/>
 
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="@dimen/weekItemHeight"
                     android:layout_marginLeft="@dimen/weekItemMarLeft"
                     android:layout_marginTop="@dimen/weekItemMarTop"
-                    android:background="@color/classIndex"
+                    android:background="@android:color/transparent"
                     android:gravity="center_horizontal|center_vertical"
-                    android:text="10" />
+                    android:text="10"
+                    android:textColor="#ffffff"/>
 
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="@dimen/weekItemHeight"
                     android:layout_marginLeft="@dimen/weekItemMarLeft"
                     android:layout_marginTop="@dimen/weekItemMarTop"
-                    android:background="@color/classIndex"
+                    android:background="@android:color/transparent"
                     android:gravity="center_horizontal|center_vertical"
-                    android:text="11" />
+                    android:text="11"
+                    android:textColor="#ffffff"/>
 
             </LinearLayout>
             <!-- 周一到周日的排列 -->
