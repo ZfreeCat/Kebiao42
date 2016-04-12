@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.getBackground().setAlpha(200);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -104,10 +105,7 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
 
             public void onDrawerClosed(View view) {
-                TextView tv1 = (TextView) findViewById(R.id.nhm_a);
-                TextView tv2 = (TextView) findViewById(R.id.nhm_b);
-                tv1.setText("");
-                tv2.setText("");
+
 
             }
 

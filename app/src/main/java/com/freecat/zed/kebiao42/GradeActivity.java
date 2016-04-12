@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -24,6 +23,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.util.Collections;
 import java.util.List;
 
 public class GradeActivity extends AppCompatActivity {
@@ -62,6 +62,7 @@ public class GradeActivity extends AppCompatActivity {
         Gson gson = new Gson();
         List<Grade> gradeList = gson.fromJson(grade, new TypeToken<List<Grade>>() {
         }.getType());
+        Collections.reverse(gradeList);
         MyAdapter mAdapter = new MyAdapter(gradeList);
         listView.setAdapter(mAdapter);
         listView.addItemDecoration(new DividerItemDecoration(this,
@@ -169,7 +170,7 @@ public class GradeActivity extends AppCompatActivity {
         @Override
         public int getItemCount() {
             // TODO Auto-generated method stub
-            return mGradeList.size()-1;
+            return mGradeList.size();
         }
 
         @Override
